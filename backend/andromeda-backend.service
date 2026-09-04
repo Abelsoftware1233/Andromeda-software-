@@ -1,0 +1,30 @@
+[Unit]
+Description=Andromeda & Zwart Gat Simulatie - Python backend (gunicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=andromeda
+Group=andromeda
+WorkingDirectory=/opt/andromeda/backend
+Environment="PATH=/opt/andromeda/venv/bin"
+Environment="ANDROMEDA_STATIC_ROOT=/opt/andromeda"
+ExecStart=/opt/andromeda/venv/bin/gunicorn \
+    --workers 2 \
+    --bind 127.0.0.1:8000 \
+    --access-logfile /var/log/andromeda/access.log \
+    --error-logfile /var/log/andromeda/error.log \
+    app:app
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
